@@ -1,0 +1,38 @@
+SQL testing
+CREATE TABLE IF NOT EXISTS `trash` (
+  `id` int(6) unsigned NOT NULL,
+  `code` varchar(80) NOT NULL,
+  `time1` datetime NOT NULL,
+  `time2` datetime,
+  PRIMARY KEY (`id`)
+);
+INSERT INTO `trash` (`id`, `code`, `time1`, `time2`) VALUES
+  ('1', '1', '2023-04-01 09:00:00', '2023-04-01 09:30:00'),
+  ('2', '2', '2023-04-01 09:00:00', '2023-04-01 16:30:00'),
+  ('3', '3', '2023-04-01 09:00:00', NULL),
+  ('4', '5', '2023-04-01 09:00:00', '2023-04-01 11:33:33');
+
+CREATE TABLE `event` (
+  `code` varchar(80) NOT NULL,
+  `action` varchar(10) NOT NULL,
+  `time1` datetime NOT NULL
+);
+INSERT INTO `event` (`code`, `action`, `time1`) VALUES
+  ('1', '1', '2023-04-01 09:00:00'),
+  ('1', '2', '2023-04-01 09:30:00'),
+  ('2', '1', '2023-04-01 09:00:00'),
+  ('2', '2', '2023-04-01 16:30:00'),
+  ('3', '1', '2023-04-01 09:00:00'),
+  ('5', '1', '2023-04-01 09:00:00'),
+  ('5', '2', '2023-04-01 11:33:33');
+
+ --------------------------------------------------
+ SELECT trash.id FROM trash
+ WHERE trash.time2 IS NOT NULL AND
+ TIMESTAMPDIFF(MINUTE, trash.time1, trash.time2) > 360;
+
+SELECT id FROM mtt.trash WHERE time2 IS NOT NULL AND TIMESTAMPDIFF(MINUTE, time1, time2) > 360;
+
+ SELECT a.code FROM mtt.event a
+ INNER JOIN mtt.event b ON a.code = b.code AND a.action = '1' AND b.action = '2'
+ WHERE TIMESTAMPDIFF(MINUTE, a.time1, b.time1) > 360;
